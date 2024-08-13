@@ -1,7 +1,5 @@
 # Ree(n)vent - Projekt Eventplanungssystem
 
-## WS 23/24 - 262199 Anwendungsprojekte
-
 ## Introduction
 
 ### What is your application doing?
