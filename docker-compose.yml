@@ -1,0 +1,30 @@
+services:
+  next-app:
+    container_name: next-app
+    build:
+      context: ./next
+      dockerfile: dev.Dockerfile
+    depends_on:
+      - postgres
+    volumes:
+      - ./next/src:/app/src
+      - ./next/public:/app/public
+    restart: always
+    ports:
+      - "3000:3000"
+
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: eventpw
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080

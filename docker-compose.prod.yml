@@ -1,0 +1,25 @@
+services:
+  next-app:
+    container_name: next-app
+    build:
+      context: ./next
+      dockerfile: prod.Dockerfile
+      args:
+        ENV_VARIABLE: ${ENV_VARIABLE}
+        NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
+    depends_on:
+      - postgres
+    volumes:
+      - ./next/src:/app/src
+      - ./next/public:/app/public
+    restart: always
+    ports:
+      - "3000:3000"
+
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: eventpw
+    volumes:
+      - ./data:/var/lib/postgresql/data
