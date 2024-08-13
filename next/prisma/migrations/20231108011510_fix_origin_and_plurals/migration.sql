@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Table" ALTER COLUMN "origin" SET DATA TYPE DOUBLE PRECISION[];

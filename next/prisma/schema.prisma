@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator zod {
+  provider = "prisma-zod-generator"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  username           String              @id @unique
+  password           String
+  email              String?             @unique
+  imageUrl           String?
+  firstName          String
+  lastName           String
+  organizedEvents    Event[]
+  eventRegistrations EventRegistration[]
+}
+
+model Event {
+  id                   Int                 @id @default(autoincrement())
+  eventname            String
+  organizer            User                @relation(fields: [organizerUsername], references: [username])
+  organizerUsername    String
+  startTime            DateTime            @db.Timestamptz(3)
+  endTime              DateTime            @db.Timestamptz(3)
+  roomGeometry         Json
+  description          String?
+  registrationFormular Json
+  invitationCode       String?             @unique
+  status               eventStatus         @default(DRAFT)
+  imageUrl             String?
+  adress               String
+  zip                  String
+  city                 String
+  country              String
+  contactInformation   String?
+  tables               Table[]
+  eventRegistrations   EventRegistration[]
+}
+
+model Table {
+  id                Int                @id @default(autoincrement())
+  event             Event              @relation(fields: [eventId], references: [id])
+  eventId           Int
+  capacity          Int
+  origin            Float[]
+  rotation          Float
+  publicId          String
+  EventRegistration EventRegistration?
+
+  @@unique([eventId, publicId])
+}
+
+model EventRegistration {
+  id                    Int                @id @default(autoincrement())
+  table                 Table              @relation(fields: [tableId], references: [id])
+  tableId               Int                @unique
+  event                 Event              @relation(fields: [eventId], references: [id])
+  eventId               Int
+  mainExhibitor         User               @relation(fields: [mainExhibitorUsername], references: [username])
+  mainExhibitorUsername String
+  name                  String
+  description           String?
+  contactInformation    String?
+  formularAnswers       Json
+  status                registrationStatus @default(PENDING)
+  submitTime            DateTime           @default(now()) @db.Timestamptz(3)
+}
+
+enum eventStatus {
+  DRAFT
+  OPEN
+  ONGOING
+  CLOSED
+}
+
+enum registrationStatus {
+  PENDING
+  ACCEPTED
+}
